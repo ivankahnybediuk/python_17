@@ -1,0 +1,19 @@
+username = input("Введите имя"
+with open ('user_info.txt', "w") as file_object:     w- переключает в режим писания, чтение по умолчанию
+     file_object.write(username)
+потом в другом файле
+   with open (user_info.txt) as file_object:
+       username = file_object.read()
+
+Использование JSON
+import json
+
+my_dict = {} - словарь
+
+with open ('dict.json', 'w') as file_object:
+    json.dump(my_dict, file_object, indent  = 2) indent - отступи
+    dumps - создает строку
+
+with open('dict.json') as file_object:
+  dict = json.load(file_object)
+  loads читает строку
