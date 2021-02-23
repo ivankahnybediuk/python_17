@@ -9,15 +9,24 @@ using unittest library.
 #
 class LibraryTest(unittest.TestCase):
     def setUp(self):
-        self.firstLibrary = Library("FirstLibrary", [], set())
+        self.library_name = "FirstLibrary"
+        self.firstLibrary = Library(self.library_name, [], set())
 
     def testSettingObject(self):
-        self.assertEqual(self.firstLibrary.name, "FirstLibrary")
+        self.assertEqual(self.firstLibrary.name, self.library_name)
 
+    def testNewLibraryEmtpy(self):
+        # убедимся что у нас в новой библиотеке ничего нет
+        self.assertEqual(self.firstLibrary.books, []) # книг нет
+        self.assertEqual(self.firstLibrary.authors, {}) # авторов нет
+        
     def testingNewBookMethod(self):
-        rowling = Author("Джоан Роулинг", "Великобритания", "31 июля 1965г", [])
+        author_name = "Джоан Роулинг"
+        rowling = Author(author_name, "Великобритания", "31 июля 1965г", [])
         self.firstLibrary.new_book(Book("Гарри Поттер и философский камень", 1997, rowling))
-        self.assertEqual(self.firstLibrary.authors, {"Джоан Роулинг"})
+        # мы дали книгу автора проверяем есть ли в ней наш автор только и всего.
+        self.assertContains(self.firstLibrary.authors, author_name)
+        # вот тут ты ступаешь по тонкому льду вмешательства в личную жизнь класса. Проверяем что книгу дали книга есть. Не на какой она полке (индексе) а просто есть и все.
         self.assertIsInstance(self.firstLibrary.books[0], Book)
 
 
@@ -64,6 +73,7 @@ class PhonebookTest(unittest.TestCase):
         self.invalidContact = 'Ivanka Hnybediuk 0988888 kiev'
 
     def testInit(self):
+        #не используем файл существующий. Создаем темповый файл и в него в сетапе класса или теста пишем если нужны данные
         self.assertEqual(self.testPhonebook.filename, "testBook.json")
         self.assertIsInstance(self.testPhonebook.contactList, list)
 
@@ -79,9 +89,11 @@ class PhonebookTest(unittest.TestCase):
 
 
     def testSaving(self):
+        #проверить что данные сохраняются можно только выгрузив их во временный файл а потом оттуда загрузить и убедиться что есть что.
         self.testPhonebook.add_contact(self.testContact)
         self.testPhonebook.saving_changing()
         self.assertTrue(os.path.exists(self.testPhonebook.filename))
+        #писать функционал а именно читать файл тут не верно. Мы хотим под определенным именем сохранить. Где в какой папке это будет сложено это дело метода сохранения (может вообще на стороннем сервере)
         with open(self.testPhonebook.filename) as f:
             data = json.load(f)
             self.assertIn(self.testContact, data)
